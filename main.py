@@ -2,8 +2,13 @@ from time import time
 from fastapi import FastAPI, __version__
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
+from routers.wellknown import wellknown
+
 
 app = FastAPI()
+app.include_router(wellknown)
+app.add_middleware(CORSMiddleware, allow_origins=["https://chat.openai.com"])
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 html = f"""

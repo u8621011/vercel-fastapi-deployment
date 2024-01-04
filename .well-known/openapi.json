@@ -1,0 +1,230 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "TODO Plugin",
+    "description": "A plugin that allows the user to create and manage a TODO list using ChatGPT. If you do not know the user's username, ask them first before making queries to the plugin. Otherwise, use the username 'global'.",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "$host"
+    }
+  ],
+  "paths": {
+    "/material/digest": {
+      "post": {
+        "operationId": "getMaterialDigest",
+        "summary": "Digest a material content into a list of items",
+        "description": "Return the markdown content of the material with the list of items appended at the end.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/materialDigestRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A successful response with material content.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "# Title\n## Subtitle\n\na very long long long content.\n\nitems:\n- item1\n- item2\n- item3"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/material/short_answer_questions": {
+      "post": {
+        "operationId": "getMaterialShortAnswerQuestions",
+        "summary": "get short answer questions from material content.",
+        "description": "Return the short answer questions list generated from the material content.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/materialShortAnswerQuestionsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of short answer questions",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "[\"What is the title of the material?\", \"What is the subtitle of the material?\"]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/todos/{username}": {
+      "get": {
+        "operationId": "getTodos",
+        "summary": "Get the list of todos",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The name of the user."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getTodosResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "addTodo",
+        "summary": "Add a todo to the list",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The name of the user."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/addTodoRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/todos/cancel/{username}": {
+      "post": {
+        "operationId": "cancelTodo",
+        "summary": "Cancel a todo from the list",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The name of the user."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/cancelTodoRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "materialDigestRequest": {
+        "type": "object",
+        "required": [
+          "content"
+        ],
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "The material content to digest."
+          }
+        }
+      },
+      "materialShortAnswerQuestionsRequest": {
+        "type": "object",
+        "required": [
+          "content"
+        ],
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "The material content to generate the short answer questions."
+          }
+        }
+      },
+      "getTodosResponse": {
+        "type": "object",
+        "properties": {
+          "todos": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The list of todos."
+          }
+        }
+      },
+      "addTodoRequest": {
+        "type": "object",
+        "required": [
+          "todo"
+        ],
+        "properties": {
+          "todo": {
+            "type": "string",
+            "description": "The todo to add to the list."
+          }
+        }
+      },
+      "cancelTodoRequest": {
+        "type": "object",
+        "required": [
+          "todo_idx"
+        ],
+        "properties": {
+          "todo_idx": {
+            "type": "integer",
+            "description": "The index of the todo to cancel."
+          }
+        }
+      }
+    }
+  }
+}
